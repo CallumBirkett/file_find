@@ -24,27 +24,20 @@ def main():
     new_dir_name = input(
         "Please input a name for the new folder you'd like to create: \n")
     file_extensions_input = input(
-        f'Please list the file extensions you want to search for or choose a type of file from the options below: \n {", ".join(extension_list)} \n')
+        f'Please list the file extensions you want to search for or choose a type of file from the options below:\n{", ".join(extension_list)}\n')
     user_ask_rename = input(
         "Would you like to replace any characters in your filenames? y/n \n")
 
-    # Make a new directory inside the chosen directory to store files.
-
-    # Make a new path to the directory.
     new_dirpath = os.path.join(root_dir, new_dir_name)
-    # If the directory doesn't exist, create it.
     if not os.path.exists(new_dirpath):
         os.mkdir(new_dirpath)
-
-    # Get a list of directories, files in the root directory.
-
+    # Generate a list of files to copy.
     file_list = []
     for (dirname, _, filenames) in os.walk(root_dir):
-        # Use a list comprehension.
         file_list += [os.path.join(dirname, filename)
                       for filename in filenames]
 
-    # For files in file tree of root directory, find files with required extension.
+    # Handle user inputs, either an option in EXTENSION_DICT or user list.
     if file_extensions_input not in extension_list:
         file_extensions = list(file_extensions_input.split())
 
@@ -59,23 +52,22 @@ def main():
                 source_path = os.path.abspath(filename)
                 shutil.copy(source_path, new_dirpath)
 
-    # Rename those files if necessary, store them in the new directory.
+    # Rename files option
     if user_ask_rename.lower() == 'y':
 
         old_char = input('What character would you like to replace? \n')
         new_char = input(
             f'What character would you like to replace {old_char} with? \n')
-
+        # Rename file within the new directory only.
         for filename in os.listdir(new_dirpath):
-            # Find the filepath of the file.
+
             filepath = os.path.join(new_dirpath, filename)
-            # For each file in the new directory, make a new filename.
+
             replacement_filename = str(os.path.splitext(filename)[
                 0]).replace(f'{old_char}', f'{new_char}')
-            # Create a new filename, and create a path to that new filename.
+
             new_filename = replacement_filename + os.path.splitext(filename)[1]
             new_filepath = os.path.join(new_dirpath, new_filename)
-            # Rename file.
             os.rename(filepath, new_filepath)
 
     else:
